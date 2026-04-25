@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
 import { ArrowRight, ArrowLeft, Loader2 } from 'lucide-react';
+import { simulateReport } from '@/lib/api';
 
 export default function Questionnaire() {
   const navigate = useNavigate();
@@ -31,17 +32,7 @@ export default function Questionnaire() {
     setLoading(true);
     setErrorMsg('');
     try {
-      const res = await fetch('/api/simulate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-      
-      if (!res.ok) {
-        throw new Error(`Server returned ${res.status} ${res.statusText}`);
-      }
-      
-      const data = await res.json();
+      const data = await simulateReport(formData);
       // Redirect to demo with data
       navigate('/demo', { state: { report: data } });
     } catch (err: any) {

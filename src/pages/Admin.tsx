@@ -2,16 +2,16 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Users, FileText, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { getAdminUsers } from '@/lib/api';
 
 export default function Admin() {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/admin/users')
-      .then(res => res.json())
+    getAdminUsers()
       .then(data => {
-        setUsers(data.users || []);
+        setUsers(data || []);
         setLoading(false);
       })
       .catch(console.error);
