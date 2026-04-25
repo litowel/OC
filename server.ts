@@ -58,8 +58,10 @@ async function startServer() {
     res.json({ users });
   });
 
+  const isProduction = process.env.NODE_ENV === "production" || __dirname.includes('dist') || process.argv[1].includes('dist');
+  
   // Vite middleware for development
-  if (process.env.NODE_ENV !== "production") {
+  if (!isProduction) {
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",

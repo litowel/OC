@@ -18,6 +18,8 @@ export default function Questionnaire() {
     liquidity: 'Monthly'
   });
 
+  const [errorMsg, setErrorMsg] = useState('');
+
   const updateForm = (key: keyof typeof formData, value: string) => {
     setFormData(prev => ({ ...prev, [key]: value }));
   };
@@ -27,17 +29,24 @@ export default function Questionnaire() {
 
   const handleSubmit = async () => {
     setLoading(true);
+    setErrorMsg('');
     try {
       const res = await fetch('/api/simulate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
+      
+      if (!res.ok) {
+        throw new Error(`Server returned ${res.status} ${res.statusText}`);
+      }
+      
       const data = await res.json();
       // Redirect to demo with data
       navigate('/demo', { state: { report: data } });
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      setErrorMsg(err.message || 'An error occurred while connecting to the server.');
       setLoading(false);
     }
   };
@@ -150,6 +159,11 @@ export default function Questionnaire() {
                     ))}
                   </div>
                 </div>
+                {errorMsg && (
+                  <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg">
+                    {errorMsg}
+                  </div>
+                )}
               </div>
             )}
           </CardContent>
